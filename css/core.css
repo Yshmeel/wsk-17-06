@@ -1,0 +1,182 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-size: 18px;
+    font-family: "Trebuchet MS";
+}
+
+header {
+    position: absolute;
+    top: 0;
+    z-index: 1;
+}
+
+div#point-editor {
+    height: 100%;
+    width: 100%;
+    background: #737373;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    display: flex;
+    margin: auto;
+}
+
+
+.point {
+    position: absolute;
+}
+
+
+.point:hover .point-buttons {
+    opacity: 1;
+}
+
+.point:hover .point-pizza {
+    opacity: 1;
+}
+
+.point-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 7px;
+    gap: 0 3px;
+    opacity: 0;
+    transition: opacity .2s ease;
+}
+
+.point-shape {
+    background: #fff;
+    width: 74px;
+    height: 74px;
+    overflow: hidden;
+    border-radius: 100%;
+}
+
+.point-pizza {
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.point-pizza-item {
+    display: block;
+    width: 50%;
+    text-align: center;
+    flex: 1 0 auto;
+    box-shadow: 0 0 2px 0;
+    cursor: pointer;
+}
+
+.point-pizza-item.disabled {
+    background: red;
+    cursor: not-allowed;
+}
+
+.point-pizza-item span {
+    transform: rotate(-45deg);
+    display: block;
+    padding: 7px;
+    position: relative;
+    user-select: none;
+}
+
+.point.form-square {
+    border-radius: 0%;
+}
+
+.point.form-square .point-pizza {
+    transform: none;
+}
+
+.point.form-square .point-pizza span {
+    transform: none;
+}
+
+.btn {
+    background: none;
+    border: none;
+    padding: 3px 5px;
+    color: #fff;
+    background: #232323;
+    cursor: pointer;
+}
+
+.point-view {}
+
+.point-view {
+    background: #eee;
+    height: 100vh;
+    padding: 100px;
+}
+
+.point-view-content-wrapper {
+    height: 80%;
+    background: #fff;
+    padding: 20px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.point-relations {
+    display: flex;
+    gap: 15px;
+}
+
+.point-relation button {
+    flex: 1 0 auto;
+    padding: 10px;
+    background: #ddd;
+    border: none;
+    font-size: 24px;
+    transition: .2s ease;
+    cursor: pointer;
+
+}
+
+.point-relation button:hover {
+    opacity: 0.3;
+}
+
+.point-relation {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    /* gap: 0 15px; */
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, .6);
+    z-index: 100;
+    display: none;
+}
+
+.modal-content {
+    max-width: 600px;
+    background: #bebebe;
+    padding: 20px;
+    transform: translateY(-50%);
+    top: 50%;
+    position: relative;
+    margin: auto;
+}
+
+input {
+    padding: 10px;
+    width: 100%;
+}
