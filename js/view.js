@@ -1,80 +1,112 @@
-const relationsContainer = document.querySelector('.point-relations');
-const contentInner = document.querySelector('.point-view-content-inner');
+(function() {
+    const relationsContainer = document.querySelector('.point-relations');
+    const contentInner = document.querySelector('.point-view-content-inner');
 
-const getStartPoint = () => {
-    const points = window._core.getPoints();
-    return points.find((p) => p.start);
-};
+    let activePointID = null;
 
-const setDescription = (description) => {
-    contentInner.innerHTML = description;
-};
+    const getStartPoint = () => {
+        const points = window._core.getPoints();
+        return points.find((p) => p.start);
+    };
 
-const setRelations = (point, relations) => {
-    relationsContainer.innerHTML = '';
+    const setDescription = (description) => {
+        contentInner.innerHTML = description;
+    };
 
-    relations.forEach((relation) => {
-        const relationElement = document.createElement('div');
-        relationElement.classList.add('point-relation');
+    const setRelations = (point, relations) => {
+        relationsContainer.innerHTML = '';
 
-        let pointID, name;
+        relations.forEach((relation) => {
+            const relationElement = document.createElement('div');
+            relationElement.classList.add('point-relation');
 
-        if(relation.relation_from_id === point.id) {
-            pointID = relation.relation_to_id;
-            name = "To: " + (relation.from_name || 'Point ' + pointID);
-        } else {
-            pointID = relation.relation_from_id;
-            name = "Back: " + (relation.to_name || 'Point ' + pointID);
-        }
+            let pointID, name;
 
-        relationElement.innerHTML = `
+            if(relation.relation_from_id === point.id) {
+                pointID = relation.relation_to_id;
+                name = "To: " + (relation.from_name || 'Point ' + pointID);
+            } else {
+                pointID = relation.relation_from_id;
+                name = "Back: " + (relation.to_name || 'Point ' + pointID);
+            }
+
+            relationElement.innerHTML = `
             <button type="button" data-point-id="${pointID}">
                 ${name}
             </button>
         `;
 
-        relationsContainer.appendChild(relationElement);
-    });
+            relationsContainer.appendChild(relationElement);
+        });
 
-    if(!point.start) {
-        const relationElement = document.createElement('div');
-        relationElement.classList.add('point-relation');
+        if(!point.start) {
+            const relationElement = document.createElement('div');
+            relationElement.classList.add('point-relation');
 
-        relationElement.innerHTML = `
+            relationElement.innerHTML = `
         <button type="button" data-point-id="${getStartPoint().id}">
             Back to start
         </button>
     `;
 
-        relationsContainer.appendChild(relationElement);
+            relationsContainer.appendChild(relationElement);
+        }
+
+        bindRelationsEvents();
+    };
+
+    const bindRelationsEvents = () => {
+        Array.from(relationsContainer.querySelectorAll('button')).forEach((btn) => {
+            btn.addEventListener('click', function() {
+                const pointID = parseInt(btn.getAttribute('data-point-id'));
+                const point = window._core.getPointByID(pointID);
+
+                setPoint(point);
+            });
+        });
     }
 
-    bindRelationsEvents();
-};
+    const setPoint = (point) => {
+        const from = window._core.getAllRelationsFromPoint(point.id);
+        const to = window._core.getAllRelationsToPoint(point.id);
 
-const bindRelationsEvents = () => {
-    Array.from(relationsContainer.querySelectorAll('button')).forEach((btn) => {
-        btn.addEventListener('click', function() {
-            const pointID = parseInt(btn.getAttribute('data-point-id'));
-            const point = window._core.getPointByID(pointID);
+        setDescription(point.description || 'Point ' + point.id);
+        setRelations(point, [...from, ...to]);
 
-            setPoint(point);
-        });
-    });
-}
+        activePointID = point.id;
+    };
 
-const setPoint = (point) => {
-    const from = window._core.getAllRelationsFromPoint(point.id);
-    const to = window._core.getAllRelationsToPoint(point.id);
+    const init = () => {
+        window.addEventListener('keyup', function(e) {
+            if(window._core.getCurrentMode() !== 'view') {
+                return false;
+            }
 
-    setDescription(point.description || 'Point ' + point.id);
-    setRelations(point, [...from, ...to]);
-};
+            const relationButtons = relationsContainer.querySelectorAll('button');
 
-const init = () => {
-    setPoint(getStartPoint());
-};
+            switch(e.key) {
+                case '1':
+                    relationButtons[0]?.click();
+                    break;
+                case '2':
+                    relationButtons[1]?.click();
+                    break;
+                case '3':
+                    relationButtons[2]?.click();
+                    break;
+                case '4':
+                    relationButtons[3]?.click();
+                    break;
+                case '5':
+                    setPoint(getStartPoint());
+                    break;
+            }
+        })
 
-window._viewer = {
-    init
-};
+        setPoint(getStartPoint());
+    };
+
+    window._viewer = {
+        init
+    };
+}());

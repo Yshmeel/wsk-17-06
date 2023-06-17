@@ -8,22 +8,33 @@
     <title>Presentation</title>
 
     <link rel="stylesheet" href="css/core.css">
+    <link href='https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css' rel='stylesheet' type='text/css' />
 </head>
 <body>
     <div id="app">
         <header>
-            <a href="view.html">
-                <button type="button">Presentation mode</button>
-            </a>
+            <button type="button" class="presentation-mode">
+                Presentation mode
+            </button>
         </header>
 
         <div id="point-editor"></div>
 
+        <div class="point-view">
+            <div class="point-view-content-wrapper">
+                <div class="point-view-content-inner"></div>
+            </div>
+
+            <div class="point-relations"></div>
+        </div>
+
         <div class="modal">
             <div class="modal-content">
                 <form action="#">
+                    <input type="hidden" id="edit-point-id">
+
                     <div class="form-group">
-                        <input type="text" name="description" id="modal-description">
+                        <div id="summernote">Hello Summernote</div>
                     </div>
 
                     <div class="form-relations">
@@ -41,9 +52,13 @@
 
     <script src="js/storage.js"></script>
     <script src="js/edit.js"></script>
+    <script src="js/view.js"></script>
     <script src="js/core.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js'></script>
+
+
     <script>
         window._mode = 'edit';
     </script>

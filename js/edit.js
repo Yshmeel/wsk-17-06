@@ -294,6 +294,10 @@ const renderPoint = (data) => {
     bindPointEvents(point, data);
     bindPizzaEvents(point, data);
     $container.append(point);
+
+    setTimeout(() => {
+        point.classList.add('animated');
+    }, 50);
 };
 
 const updatePointCoordinates = (id, x, y) => {
@@ -354,7 +358,7 @@ const bindPointEvents = (dom, point) => {
     }
 
     dom.addEventListener('dragstart', function(e) {
-        dom.style.cursor = 'drag';
+        dom.style.cursor = 'move';
         e.dataTransfer.setDragImage(new Image(), 0, 0);
         dragging = true;
     });
@@ -411,6 +415,52 @@ const init = () => {
 
     recreateAllRelations();
     updateAllPointsRelations();
+
+    window._editor = new FroalaEditor('#summernote');
+
+    // modal functionality
+    const $modal = document.querySelector('.modal');
+
+    $modal.querySelector('.btn-close').addEventListener('click', function() {
+        jQuery('.modal').fadeOut(300);
+    });
+
+    $modal.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const $editPointIDInput =   document.getElementById('edit-point-id');
+        const pointID = parseInt($editPointIDInput.getAttribute('data-point-id'));
+
+        const formRelations = document.querySelector('.form-relations').querySelectorAll('input');
+        Array.from(formRelations).forEach((v) => {
+            const neighborPointID = parseInt(v.getAttribute('data-point-id'));
+            const dir = v.getAttribute('data-dir');
+
+            const relation = window._core.getRelationByFromAndToID(dir === 'from' ? neighborPointID : pointID,
+                dir === 'from' ? pointID : neighborPointID);
+
+            if(!relation) {
+                return;
+            }
+
+            if(dir === 'from') {
+                relation.to_name = v.value;
+            } else {
+                relation.from_name = v.value;
+            }
+        });
+
+        const point = window._core.getPointByID(pointID);
+        point.description = window._editor.html.get();
+
+        window._core.save();
+
+        jQuery('.modal').fadeOut(300);
+    });
+
+    // prevent forbidden cursor
+    document.addEventListener("dragover", (event) => {
+        event.preventDefault();
+    });
 };
 
 // edit modal
@@ -447,50 +497,11 @@ const openEditModal = (point) => {
         formRelations.appendChild(relationElement);
     });
 
-    const $modalDescription =   document.getElementById('modal-description');
-    $modalDescription.value = point.description;
-    $modalDescription.setAttribute('data-point-id', point.id);
+    window._editor.html.set(point.description);
+    document.getElementById('edit-point-id').setAttribute('data-point-id', point.id);
 
     jQuery('.modal').fadeIn(300);
 };
-
-const $modal = document.querySelector('.modal');
-
-$modal.querySelector('.btn-close').addEventListener('click', function() {
-    jQuery('.modal').fadeOut(300);
-});
-
-$modal.querySelector('form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const $modalDescription =   document.getElementById('modal-description');
-    const pointID = parseInt($modalDescription.getAttribute('data-point-id'));
-
-    const formRelations = document.querySelector('.form-relations').querySelectorAll('input');
-    Array.from(formRelations).forEach((v) => {
-        const neighborPointID = parseInt(v.getAttribute('data-point-id'));
-        const dir = v.getAttribute('data-dir');
-
-        const relation = window._core.getRelationByFromAndToID(dir === 'from' ? neighborPointID : pointID,
-            dir === 'from' ? pointID : neighborPointID);
-
-        if(!relation) {
-            return;
-        }
-
-        if(dir === 'from') {
-            relation.to_name = v.value;
-        } else {
-            relation.from_name = v.value;
-        }
-    });
-
-    const point = window._core.getPointByID(pointID);
-    point.description = $modalDescription.value;
-
-    window._core.save();
-
-    jQuery('.modal').fadeOut(300);
-})
 
 // expose only public method *init*
 window._editor = {

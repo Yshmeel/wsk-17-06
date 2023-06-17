@@ -1,6 +1,8 @@
 (function() {
     let items = [];
 
+    let currentMode = 'edit';
+
 // DOM element
     const $app = document.getElementById('app');
 
@@ -13,13 +15,46 @@
         // window._mode being placed at specific .html page
         // index.html - edit
         // view.html - view
-        switch(window._mode) {
-            case 'edit':
-                window._editor.init();
-                break
-            case 'view':
-                window._viewer.init();
-                break
+        changeMode('edit');
+
+        setTimeout(() => {
+            window._editor.init();
+            window._viewer.init();
+        }, 300);
+
+        document.querySelector('.presentation-mode').addEventListener('click', function(e) {
+            changeMode(currentMode === 'edit' ? 'view' : 'edit');
+
+            switch(currentMode) {
+                case 'view':
+                    e.target.innerHTML = 'Edit mode';
+                    break;
+                case 'edit':
+                    e.target.innerHTML = 'Presentation mode';
+                    break;
+            }
+        })
+    };
+
+    const getCurrentMode = () => {
+        return currentMode;
+    };
+
+    const changeMode = (mode) => {
+        currentMode = mode;
+
+        if(mode === 'edit') {
+            jQuery('.point-view').fadeOut(100);
+            jQuery('#point-editor').fadeIn(300);
+            try {
+                document.exitFullscreen().then(() => {}).catch(() => {});
+            } catch(e) { }
+        } else {
+            jQuery('#point-editor').fadeOut(100);
+            jQuery('.point-view').slideDown(300);
+
+            document.documentElement.requestFullscreen();
+            window._viewer.init();
         }
     };
 
@@ -109,7 +144,6 @@
     };
 
     const getRelationByFromAndToID = (fromID, toID) => {
-        console.log(fromID, toID, items);
         return items.find((i) => {
             return i.relation_from_id === fromID && i.relation_to_id === toID;
         })
@@ -135,6 +169,7 @@
 
     window._core = {
         items,
+        getCurrentMode,
         getPointByID,
         getPoints,
         getRelations,

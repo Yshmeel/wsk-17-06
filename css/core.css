@@ -10,8 +10,9 @@ body {
 
 header {
     position: absolute;
-    top: 0;
+    top: 20px;
     z-index: 1;
+    left: 20px;
 }
 
 div#point-editor {
@@ -27,11 +28,15 @@ div#point-editor {
     margin: auto;
 }
 
-
 .point {
     position: absolute;
+    transition: opacity .2s ease;
+    opacity: 0.6;
 }
 
+.point.animated {
+    opacity: 1;
+}
 
 .point:hover .point-buttons {
     opacity: 1;
@@ -106,13 +111,11 @@ div#point-editor {
 .btn {
     background: none;
     border: none;
-    padding: 3px 5px;
+    padding: 6px 6px;
     color: #fff;
     background: #232323;
     cursor: pointer;
 }
-
-.point-view {}
 
 .point-view {
     background: #eee;
@@ -168,8 +171,8 @@ div#point-editor {
 
 .modal-content {
     max-width: 600px;
-    background: #bebebe;
-    padding: 20px;
+    background: #fff;
+    padding: 40px;
     transform: translateY(-50%);
     top: 50%;
     position: relative;
@@ -179,4 +182,28 @@ div#point-editor {
 input {
     padding: 10px;
     width: 100%;
+}
+
+.form-relations {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+header button {
+    padding: 20px;
+    border: none;
+    font-size: 24px;
+    transition: .2s ease;
+    cursor: pointer;
+}
+
+header button:hover {
+    opacity: .7;
 }
